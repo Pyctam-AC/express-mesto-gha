@@ -23,7 +23,7 @@ const getUserById = (req, res) => {
       return res.status(200).send(user);
     })
     .catch((err) => {
-      return res.status(400).send(err.message);
+      return res.status(400).send({ message: "Такой пользователь не найден" });
     });
 };
 
@@ -58,7 +58,7 @@ const updateDataUser = (req, res) => {
         .status(404)
         .send({ message: "Такой пользователь не найден" });
     }
-    return res.status(201).send(user);
+    return res.status(200).send(user);
   })
   .catch((err) => {
     if (err.name === "ValidationError") {
@@ -88,7 +88,7 @@ const updateAvatarUser = (req, res) => {
         .status(404)
         .send({ message: "Такой пользователь не найден" });
     }
-    return res.status(201).send(user);
+    return res.status(200).send(user);
   })
   .catch((err) => {
     if (err.name === "ValidationError") {

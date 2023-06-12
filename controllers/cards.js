@@ -46,7 +46,7 @@ const likeCardById = (req, res) => {
       }
     })
     .catch((err) => {
-      return res.status(500).send({ message: "Server Error" });
+      return res.status(400).send({ message: "Некорректный id карточки" });
     });
 };
 
@@ -64,7 +64,7 @@ const dislikeCardById = (req, res) => {
     }
   })
   .catch((err) => {
-    return res.status(500).send({ message: "Server Error" });
+    return res.status(400).send({ message: "Некорректный id карточки" });
   });
 }
 
@@ -84,14 +84,14 @@ const deleteCardById = (req, res) => {
         return Card.findByIdAndRemove(req.params.id)
           .then((removeCard) => res.status(200).send(removeCard))
           .catch((err) => {
-            return res.status(500).send(err.message);
+            return res.status(400).send({ message: "Удаление карточки с некорректным id"});
           });
       } else {
         return res.status(400).send({ message: "Можно удалять только свои карточки" });
       }
     })
     .catch((err) => {
-      return res.status(500).send(err.message);
+      return res.status(400).send({ message: "Удаление карточки с некорректным id"});
     });
 }
 

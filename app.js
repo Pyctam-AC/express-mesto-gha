@@ -12,7 +12,7 @@ mongoose.connect('mongodb://0.0.0.0/mestodb', {
   useNewUrlParser: true,
   //family: 4,
 }).then(()=> {
-    console.log('connect to db');
+    console.log('connect to db')
 });
 
 

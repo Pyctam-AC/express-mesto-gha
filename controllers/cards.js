@@ -9,18 +9,28 @@ const getCards = (req, res) => {
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
-  const id = req.user;
+  const id = req.user._id;
 
   return Card.create(
-    { name, link, owner: id },
+    { name: "ghj", link: "dfkkn k" },
     {
       new: true,
       runValidators: true,
     }
   ).then((cards) => {
     return res.status(201).send(cards);
+  })
+  .catch((err) => {
+    if (err.name === "ValidationError") {
+      return res.status(400).send({
+        message: `${Object.values(err.errors)
+          .map((err) => err.message)
+          .join(", ")}`,
+      });
+    };
+    return res.status(500).send({ message: "Server Error" });
   });
-};
+}
 
 const likeCardById = (req, res) => {
   Card.findByIdAndUpdate(
@@ -70,7 +80,7 @@ const deleteCardById = (req, res) => {
         .send({ message: "Такой карточки нет" });
       }
       //сравниваем id создателя карточки и пользователя
-      if (card.owner.toString() === id) {
+      if (card.owner._id.toString() === id) {
         return Card.findByIdAndRemove(req.params.id)
           .then((removeCard) => res.status(200).send(removeCard))
           .catch((err) => {

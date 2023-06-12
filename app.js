@@ -4,7 +4,7 @@ const routes = require('./routes/index');
 const mongoose = require('mongoose');
 
 const { PORT = 3000 } = process.env;
-//http://localhost:3002
+//http://localhost:3000
 
 const app = express();
 

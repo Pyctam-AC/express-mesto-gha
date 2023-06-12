@@ -11,11 +11,16 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
   const id = req.user;
 
-  return Card.create({ name, link, owner: id})
-    .then((cards) => {
-      return res.status(201).send(cards)
-    })
-}
+  return Card.create(
+    { name, link, owner: id },
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).then((cards) => {
+    return res.status(201).send(cards);
+  });
+};
 
 const likeCardById = (req, res) => {
   Card.findByIdAndUpdate(

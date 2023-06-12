@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 router.use('/users', userRoutes);
 router.use('/cards', cardRoutes);
 
-router.get('/*', (req, res) => {
+router.get('*', (req, res) => {
   res.status(404).send({ message: "Такая страница не найдена" })
 });
 

@@ -68,7 +68,7 @@ const updateDataUser = (req, res) => {
           .join(", ")}`,
       });
     }
-    return res.status(500).send({ message: "Server Error" });
+    return res.status(400).send({ message: "Server Error" });
   });
 };
 

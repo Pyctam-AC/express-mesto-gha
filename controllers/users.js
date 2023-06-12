@@ -23,7 +23,7 @@ const getUserById = (req, res) => {
       return res.status(200).send(user);
     })
     .catch((err) => {
-      return res.status(500).send({ message: "Server Error" });
+      return res.status(400).send(err.message);
     });
 };
 
@@ -32,7 +32,7 @@ const createUser = (req, res) => {
 
   return User.create(newUserData)
     .then((newUser) => {
-      return res.status(201).send(newUser);
+      return res.status(200).send(newUser);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {

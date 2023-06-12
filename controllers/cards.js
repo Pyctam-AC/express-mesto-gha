@@ -12,11 +12,11 @@ const createCard = (req, res) => {
   const id = req.user._id;
 
   return Card.create(
-    { name: "ghj", link: "dfkkn k" },
-    {
+    { name, link, owner: id },
+/*     {
       new: true,
       runValidators: true,
-    }
+    } */
   ).then((cards) => {
     return res.status(201).send(cards);
   })
@@ -80,7 +80,7 @@ const deleteCardById = (req, res) => {
         .send({ message: "Такой карточки нет" });
       }
       //сравниваем id создателя карточки и пользователя
-      if (card.owner._id.toString() === id) {
+      if (card.owner.toString() === id) {
         return Card.findByIdAndRemove(req.params.id)
           .then((removeCard) => res.status(200).send(removeCard))
           .catch((err) => {

@@ -13,10 +13,6 @@ const createCard = (req, res) => {
 
   return Card.create(
     { name, link, owner: id },
-/*     {
-      new: true,
-      runValidators: true,
-    } */
   ).then((cards) => {
     return res.status(201).send(cards);
   })

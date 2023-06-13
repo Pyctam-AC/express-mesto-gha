@@ -14,7 +14,7 @@ mongoose
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log('connect to db');
+    /* console.log('connect to db'); */
   });
 
 app.use(bodyParser.json());
@@ -30,5 +30,5 @@ app.use((req, res, next) => {
 app.use(routes);
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+  /* console.log(`App listening on port ${PORT}`); */
 });

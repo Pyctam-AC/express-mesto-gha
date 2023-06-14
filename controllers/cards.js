@@ -7,7 +7,7 @@ const getCards = (req, res, next) => {
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch(next);
+    .catch(() => next());
 };
 
 const createCard = (req, res, next) => {

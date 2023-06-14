@@ -6,7 +6,7 @@ const getUsers = (req, res, next) => {
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch(next);
+    .catch(() => next());
 };
 
 const getUserById = (req, res, next) => {
@@ -60,7 +60,7 @@ const updateDataUser = (req, res, next) => {
       return res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы неверные данный' });
       }
       return next();
@@ -86,7 +86,7 @@ const updateAvatarUser = (req, res, next) => {
       return res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send(
           { message: 'Переданы неверные данный' },
         );

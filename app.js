@@ -15,6 +15,7 @@ mongoose
   })
   .then(() => {
     /* console.log('connect to db'); */
+    /* console.log(mongoose.Error); */
   });
 
 app.use(express.json());

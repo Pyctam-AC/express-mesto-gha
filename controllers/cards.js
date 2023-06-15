@@ -1,16 +1,18 @@
 const httpConstants = require('http2').constants;
 const Card = require('../models/card');
 
-const getCards = (req, res, next) => {
+const getCards = (req, res) => {
   Card
     .find({})
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch(() => next());
+    .catch(() => {
+      res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
+    });
 };
 
-const createCard = (req, res, next) => {
+const createCard = (req, res) => {
   const { name, link } = req.body;
   const id = req.user._id;
 
@@ -22,11 +24,11 @@ const createCard = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании карточки' });
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const likeCardById = (req, res, next) => {
+const likeCardById = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
@@ -44,11 +46,11 @@ const likeCardById = (req, res, next) => {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
           .send({ message: 'Некорректный id карточки' });
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const dislikeCardById = (req, res, next) => {
+const dislikeCardById = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
@@ -65,11 +67,11 @@ const dislikeCardById = (req, res, next) => {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
           .send({ message: 'Некорректный id карточки' });
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const deleteCardById = (req, res, next) => {
+const deleteCardById = (req, res) => {
   const id = req.user._id;
 
   return Card.findById(req.params.id)
@@ -80,8 +82,7 @@ const deleteCardById = (req, res, next) => {
       }
       if (card.owner.toString() === id) {
         return Card.findByIdAndRemove(req.params.id)
-          .then((removeCard) => res.status(200).send(removeCard))
-          .catch(next);
+          .then((removeCard) => res.status(200).send(removeCard));
       }
       return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
         .send({ message: 'Можно удалять только свои карточки' });
@@ -91,7 +92,7 @@ const deleteCardById = (req, res, next) => {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
           .send({ message: 'Некорректный id карточки' });
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 

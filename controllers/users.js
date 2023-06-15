@@ -1,15 +1,15 @@
 const httpConstants = require('http2').constants;
 const User = require('../models/user');
 
-const getUsers = (req, res, next) => {
+const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       res.status(200).send(users);
     })
-    .catch(() => next());
+    .catch(() => res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' }));
 };
 
-const getUserById = (req, res, next) => {
+const getUserById = (req, res) => {
   const { id } = req.params;
 
   return User.findById(id)
@@ -26,11 +26,11 @@ const getUserById = (req, res, next) => {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
           .send({ message: 'Такой пользователь не найден' });
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const createUser = (req, res, next) => {
+const createUser = (req, res) => {
   const newUserData = req.body;
 
   return User.create(newUserData)
@@ -41,11 +41,11 @@ const createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы неверные данные' });
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const updateDataUser = (req, res, next) => {
+const updateDataUser = (req, res) => {
   const newUserData = req.body;
   return User.findByIdAndUpdate(req.user._id, newUserData, {
     new: true,
@@ -63,11 +63,11 @@ const updateDataUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы неверные данный' });
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const updateAvatarUser = (req, res, next) => {
+const updateAvatarUser = (req, res) => {
   const { avatar } = req.body;
   return User.findByIdAndUpdate(
     req.user._id,
@@ -91,7 +91,7 @@ const updateAvatarUser = (req, res, next) => {
           { message: 'Переданы неверные данный' },
         );
       }
-      return next();
+      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 

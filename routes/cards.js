@@ -26,21 +26,21 @@ router.post(
 
 router.put(
   '/:id/likes',
-  /*   celebrate({
+  celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().length(24).hex().required(),
+      cardId: Joi.string().length(24).required(),
     }),
-  }), */
+  }),
   likeCardById,
 );
 
 router.delete(
   '/:id/likes',
-  /*   celebrate({
+  celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().length(24).hex().required(),
+      cardId: Joi.string().length(24).required(),
     }),
-  }), */
+  }),
   dislikeCardById,
 );
 
@@ -55,3 +55,4 @@ router.delete(
 );
 
 module.exports = router;
+// Joi.string().length(24).hex().required(),

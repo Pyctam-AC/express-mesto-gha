@@ -2,7 +2,7 @@
 const Card = require('../models/card');
 
 const BadRequestErrorr = require('../errors/BadRequestError');
-// const ForbiddenError = require('../errors/ForbiddenError');
+const ForbiddenError = require('../errors/ForbiddenError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const getCards = (req, res, next) => {
@@ -93,7 +93,7 @@ const deleteCardById = (req, res, next) => {
           .then((removeCard) => res.status(200).send(removeCard));
       }
 
-      throw new BadRequestErrorr('Можно удалять только свои карточки');
+      throw new ForbiddenError('Можно удалять только свои карточки');
     })
     .catch((err) => {
       if (err.name === 'CastError') {

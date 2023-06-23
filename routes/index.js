@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const httpConstants = require('http2').constants;
+const { errors } = require('celebrate');
 const userRoutes = require('./users');
 const cardRoutes = require('./cards');
 const authRoutes = require('./auth');
@@ -17,6 +18,7 @@ router.use('*', (req, res, next) => {
   next();
 });
 
+router.use(errors());
 router.use(errorHandler);
 
 module.exports = router;

@@ -1,34 +1,44 @@
-const httpConstants = require('http2').constants;
+// const httpConstants = require('http2').constants;
 const Card = require('../models/card');
 
-const getCards = (req, res) => {
+const BadRequestErrorr = require('../errors/BadRequestError');
+// const ForbiddenError = require('../errors/ForbiddenError');
+const NotFoundError = require('../errors/NotFoundError');
+
+const getCards = (req, res, next) => {
   Card
     .find({})
     .then((cards) => {
       res.status(200).send(cards);
     })
-    .catch(() => {
-      res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
-    });
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const id = req.user._id;
 
-  return Card.create({ name, link, owner: id })
+  if (!name || !link) {
+    throw new BadRequestErrorr('Не переданы данные для создания карточки');
+  }
+
+  Card.create({
+    name: req.body.name,
+    link: req.body.link,
+    owner: req.user._id,
+  })
     .then((cards) => {
       res.status(201).send(cards);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании карточки' });
+        next(new BadRequestErrorr('Переданы некорректные данные для создания карточки'));
+      } else {
+        next(err);
       }
-      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const likeCardById = (req, res) => {
+const likeCardById = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
@@ -36,21 +46,20 @@ const likeCardById = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(httpConstants.HTTP_STATUS_NOT_FOUND)
-          .send({ message: 'Такой карточки нет' });
+        throw new NotFoundError('Такой карточки нет');
       }
       return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
-          .send({ message: 'Некорректный id карточки' });
+        next(new BadRequestErrorr('Некорректный id карточки'));
+      } else {
+        next(err);
       }
-      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const dislikeCardById = (req, res) => {
+const dislikeCardById = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
@@ -58,41 +67,40 @@ const dislikeCardById = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(httpConstants.HTTP_STATUS_NOT_FOUND).send({ message: 'Такой карточки нет' });
+        throw new NotFoundError('Такой карточки нет');
       }
       return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
-          .send({ message: 'Некорректный id карточки' });
+        next(new BadRequestErrorr('Некорректный id карточки'));
+      } else {
+        next(err);
       }
-      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 
-const deleteCardById = (req, res) => {
+const deleteCardById = (req, res, next) => {
   const id = req.user._id;
 
   return Card.findById(req.params.id)
     .then((card) => {
       if (!card) {
-        return res.status(httpConstants.HTTP_STATUS_NOT_FOUND)
-          .send({ message: 'Такой карточки нет' });
+        throw new NotFoundError('Такой карточки нет');
       }
       if (card.owner.toString() === id) {
         return Card.findByIdAndRemove(req.params.id)
           .then((removeCard) => res.status(200).send(removeCard));
       }
-      return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
-        .send({ message: 'Можно удалять только свои карточки' });
+
+      throw new BadRequestErrorr('Можно удалять только свои карточки');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(httpConstants.HTTP_STATUS_BAD_REQUEST)
-          .send({ message: 'Некорректный id карточки' });
+        next(new BadRequestErrorr('Некорректный id карточки'));
+      } else {
+        next(err);
       }
-      return res.status(httpConstants.HTTP_STATUS_SERVER_ERROR).send({ message: 'Ошибка сервера' });
     });
 };
 

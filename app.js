@@ -14,19 +14,19 @@ mongoose
     useNewUrlParser: true,
   })
   .then(() => {
-    /* console.log('connect to db'); */
+  //  console.log('connect to db');
     /* console.log(mongoose.Error); */
   });
 
 app.use(express.json());
 
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
   req.user = {
     _id: '6485da795fb7954ee511993a',
   };
 
   next();
-});
+}); */
 
 app.use(routes);
 

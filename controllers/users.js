@@ -49,6 +49,9 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       email: req.body.email,
       password: hash,
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
     }))
     .then((newUser) => {
       res.status(201).send(newUser);
@@ -69,10 +72,9 @@ const getUserById = (req, res, next) => {
 
   return User.findById(id)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такой пользователь не найден');
-      }
-      return res.status(200).send(user);
+      if (user) return res.status(200).send(user);
+
+      throw new NotFoundError('Такой пользователь не найден');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -88,10 +90,9 @@ const getDataUser = (req, res, next) => {
 
   return User.findById(id)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такой пользователь не найден');
-      }
-      return res.status(200).send(user);
+      if (user) return res.status(200).send(user);
+
+      throw new NotFoundError('Такой пользователь не найден');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -109,10 +110,9 @@ const updateDataUser = (req, res, next) => {
     runValidators: true,
   })
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такой пользователь не найден');
-      }
-      return res.status(200).send(user);
+      if (user) return res.status(200).send(user);
+
+      throw new NotFoundError('Такой пользователь не найден');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -134,10 +134,9 @@ const updateAvatarUser = (req, res, next) => {
     },
   )
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такой пользователь не найден');
-      }
-      return res.status(200).send(user);
+      if (user) return res.status(200).send(user);
+
+      throw new NotFoundError('Такой пользователь не найден');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

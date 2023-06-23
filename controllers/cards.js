@@ -45,10 +45,9 @@ const likeCardById = (req, res, next) => {
     { new: true },
   )
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Такой карточки нет');
-      }
-      return res.status(200).send(card);
+      if (card) return res.status(200).send(card);
+
+      throw new NotFoundError('Такой карточки нет');
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -66,10 +65,9 @@ const dislikeCardById = (req, res, next) => {
     { new: true },
   )
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Такой карточки нет');
-      }
-      return res.status(200).send(card);
+      if (card) return res.status(200).send(card);
+
+      throw new NotFoundError('Такой карточки нет');
     })
     .catch((err) => {
       if (err.name === 'CastError') {

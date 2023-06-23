@@ -50,7 +50,7 @@ const likeCardById = (req, res, next) => {
       throw new NotFoundError('Такой карточки нет');
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestErrorr('Некорректный id карточки'));
       } else {
         next(err);
@@ -70,7 +70,7 @@ const dislikeCardById = (req, res, next) => {
       throw new NotFoundError('Такой карточки нет');
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestErrorr('Некорректный id карточки'));
       } else {
         next(err);

@@ -23,8 +23,9 @@ const login = (req, res, next) => {
           { expiresIn: '7d' },
         );
         res.send({ token, user });
+      } else {
+        throw new AuthorisationError('Неправильные почта или пароль');
       }
-      throw new AuthorisationError('Неправильные почта или пароль');
     })
     .catch(next);
 };

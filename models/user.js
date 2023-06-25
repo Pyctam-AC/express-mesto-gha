@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const AuthorisationError = require('../errors/AuthorisationError');
 
-/* const validator = require('validator'); */
+// const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -11,20 +11,12 @@ const userSchema = new mongoose.Schema({
     default: 'Жак-Ив Кусто',
     minlength: 2,
     maxlength: 30,
-    validate: {
-      validator: ({ length }) => length >= 2 && length <= 30,
-      message: 'Необходимо ввести от 2 до 30 символов',
-    },
   },
   about: {
     type: String,
     default: 'Исследователь',
     minlength: 2,
     maxlength: 30,
-    validate: {
-      validator: ({ length }) => length >= 2 && length <= 30,
-      message: 'Необходимо ввести от 2 до 30 символов',
-    },
   },
   avatar: {
     type: String,
@@ -46,12 +38,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 4,
     select: false,
-    validate: {
-      validator: ({ length }) => length >= 4,
-      message: 'Пароль должен быть не меньше 4 символов',
-    },
   },
 });
 
@@ -74,11 +61,19 @@ userSchema.statics.findUserByCredentials = function (email, password) {
 };
 
 // убираем пароль из ответа при создании пользователя
-userSchema.set('toJSON', {
-  transform(req, res) {
-    delete res.password;
-    return res;
-  },
-});
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
 module.exports = mongoose.model('user', userSchema);
+
+/*
+userSchema.set('toJSON', {
+  transform(doc, ret) {
+    delete ret.password;
+    return ret;
+  },
+}
+*/

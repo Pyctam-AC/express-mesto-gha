@@ -2,10 +2,6 @@
 const jwt = require('jsonwebtoken');
 const AuthorisationError = require('../errors/AuthorisationError');
 
-/* const handleAuthError = (next) => {
-  return next(new AuthorisationError('Неправильные почта или пароль'));
-};
- */
 const extractBearerToken = (header) => {
   return header.replace('Bearer ', '');
 };
@@ -33,3 +29,23 @@ module.exports = (req, res, next) => {
 
   next();
 };
+
+/* const handleAuthError = (next) => {
+  return next(new AuthorisationError('Неправильные почта или пароль'));
+};
+ */
+
+//  const { authorization } = req.headers;
+
+//  if (!authorization || !authorization.startsWith('Bearer ')) {
+//  return handleAuthError(res);
+
+// const token = extractBearerToken(cookies.jwt);
+/* const { cookies } = req.headers;
+if (!cookies.jwt || !cookies.jwt.startsWith('Bearer ')) {
+  return next(new AuthorisationError('Неправильные почта или пароль'));
+} */
+
+// const token = extractBearerToken(authorization);
+
+//  return handleAuthError(res);

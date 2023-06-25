@@ -1,6 +1,7 @@
 const express = require('express');
 /* const bodyParser = require('body-parser'); */
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser')
 
 const routes = require('./routes/index');
 
@@ -19,6 +20,8 @@ mongoose
   });
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 /* app.use((req, res, next) => {
   req.user = {

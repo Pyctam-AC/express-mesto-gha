@@ -38,10 +38,11 @@ const createCard = (req, res, next) => {
     });
 };
 
-const likeCardById = (req, res, next) => {
+// логика лайка и дизлайка
+const changeLikes = (req, res, opt, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
-    { $addToSet: { likes: req.user._id } },
+    { [opt]: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
@@ -52,7 +53,7 @@ const likeCardById = (req, res, next) => {
       throw new NotFoundError('Такой карточки нет');
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequestErrorr('Некорректный id карточки'));
       } else {
         next(err);
@@ -60,26 +61,12 @@ const likeCardById = (req, res, next) => {
     });
 };
 
-const dislikeCardById = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.id,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((card) => {
-      if (card) {
-        return res.status(200).send(card);
-      }
+const likeCardById = (req, res, next) => {
+  changeLikes(req, res, '$addToSet', next);
+};
 
-      throw new NotFoundError('Такой карточки нет');
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestErrorr('Некорректный id карточки'));
-      } else {
-        next(err);
-      }
-    });
+const dislikeCardById = (req, res, next) => {
+  changeLikes(req, res, '$pull', next);
 };
 
 const deleteCardById = (req, res, next) => {
@@ -91,7 +78,7 @@ const deleteCardById = (req, res, next) => {
         throw new NotFoundError('Такой карточки нет');
       }
       if (card.owner.toString() === id) {
-        return Card.findByIdAndRemove(req.params.id)
+        return card.deleteOne()
           .then((removeCard) => res.status(200).send(removeCard));
       }
 

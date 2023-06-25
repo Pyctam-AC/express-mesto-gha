@@ -1,6 +1,6 @@
+/* eslint-disable arrow-body-style */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// const httpConstants = require('http2').constants;
 const User = require('../models/user');
 const AuthorisationError = require('../errors/AuthorisationError');
 const NotFoundError = require('../errors/NotFoundError');
@@ -10,21 +10,15 @@ const BadRequestErrorr = require('../errors/BadRequestError');
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    throw new BadRequestErrorr('Не передан email или пароль');
-  }
-
   return User.findUserByCredentials(email, password, next)
     .then((user) => {
-      if (user) {
-        const token = jwt.sign(
-          { _id: user._id },
-          'some-secret-key',
-          { expiresIn: '7d' },
-        );
-        res.send({ token, user });
-        throw new AuthorisationError('Неправильные почта или пароль');
-      }
+      const token = jwt.sign(
+        { _id: user._id },
+        'some-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.send({ token, user });
+      throw new AuthorisationError('Неправильные почта или пароль');
     })
     .catch(next);
 };
@@ -67,45 +61,34 @@ const createUser = (req, res, next) => {
     });
 };
 
+// логика запросов данных пользователя
+const dataUser = (id, res, next) => User.findById(id)
+  .then((user) => {
+    if (user) return res.status(200).send(user);
+
+    throw new NotFoundError('Такой пользователь не найден');
+  })
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      next(new BadRequestErrorr('Ну нет, так нет'));
+    } else {
+      next(err);
+    }
+  });
+
 const getUserById = (req, res, next) => {
   const { id } = req.params;
-
-  return User.findById(id)
-    .then((user) => {
-      if (user) return res.status(200).send(user);
-
-      throw new NotFoundError('Такой пользователь не найден');
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestErrorr('Ну нет, так нет'));
-      } else {
-        next(err);
-      }
-    });
+  dataUser(id, res, next);
 };
 
 const getDataUser = (req, res, next) => {
   const id = req.user._id;
-
-  return User.findById(id)
-    .then((user) => {
-      if (user) return res.status(200).send(user);
-
-      throw new NotFoundError('Такой пользователь не найден');
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestErrorr('Ну нет, так нет'));
-      } else {
-        next(err);
-      }
-    });
+  dataUser(id, res, next);
 };
 
-const updateDataUser = (req, res, next) => {
-  const newUserData = req.body;
-  return User.findByIdAndUpdate(req.user._id, newUserData, {
+// логика обновления данных пользователя
+const updateUser = (id, newData, res, next) => {
+  return User.findByIdAndUpdate(id, newData, {
     new: true,
     runValidators: true,
   })
@@ -123,28 +106,18 @@ const updateDataUser = (req, res, next) => {
     });
 };
 
+const updateDataUser = (req, res, next) => {
+  const newUserData = req.body;
+  const id = req.user._id;
+
+  updateUser(id, newUserData, res, next);
+};
+
 const updateAvatarUser = (req, res, next) => {
   const { avatar } = req.body;
-  return User.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
-    .then((user) => {
-      if (user) return res.status(200).send(user);
+  const id = req.user._id;
 
-      throw new NotFoundError('Такой пользователь не найден');
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestErrorr('Переданы неверные данные'));
-      } else {
-        next(err);
-      }
-    });
+  updateUser(id, { avatar }, res, next);
 };
 
 module.exports = {

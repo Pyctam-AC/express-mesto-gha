@@ -20,7 +20,6 @@ const login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res.send({ token, user });
-      // throw new AuthorisationError('Неправильные почта или пароль');
     })
     .catch(next);
 };
@@ -34,11 +33,6 @@ const getUsers = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-/*  const { email, password } = req.body;
-   if (!email || !password) {
-    throw new BadRequestErrorr('Не передан email или пароль');
-  } */
-
   return bcrypt
     .hash(req.body.password, 10)
     .then((hash) => User.create({
@@ -110,13 +104,11 @@ const updateUser = (newData, req, res, next) => {
 
 const updateDataUser = (req, res, next) => {
   const newUserData = req.body;
-
   updateUser(newUserData, req, res, next);
 };
 
 const updateAvatarUser = (req, res, next) => {
   const { avatar } = req.body;
-
   updateUser({ avatar }, req, res, next);
 };
 

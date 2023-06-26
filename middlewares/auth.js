@@ -2,6 +2,8 @@
 const jwt = require('jsonwebtoken');
 const AuthorisationError = require('../errors/AuthorisationError');
 
+const secretKey = process.env.SECRET_KEY || 'some-secret-key';
+
 const extractBearerToken = (header) => {
   return header.replace('Bearer ', '');
 };
@@ -19,10 +21,10 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'some-secret-key');
+    payload = jwt.verify(token, secretKey);
   } catch (err) {
   //  return handleAuthError(res);
-    return next(new AuthorisationError('Неправильные почта или пароль'));
+    return next(new AuthorisationError('Необходима авторизация'));
   }
 
   req.user = payload;
@@ -44,7 +46,10 @@ module.exports = (req, res, next) => {
 /* const { cookies } = req.headers;
 if (!cookies.jwt || !cookies.jwt.startsWith('Bearer ')) {
   return next(new AuthorisationError('Неправильные почта или пароль'));
-} */
+}
+const myData = pm.response.json();
+pm.environment.set('token', myData.token)
+*/
 
 // const token = extractBearerToken(authorization);
 

@@ -2,10 +2,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const AuthorisationError = require('../errors/AuthorisationError');
+// const AuthorisationError = require('../errors/AuthorisationError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const BadRequestErrorr = require('../errors/BadRequestError');
+
+const secretKey = process.env.SECRET_KEY || 'some-secret-key';
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -14,11 +16,11 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'some-secret-key',
+        secretKey,
         { expiresIn: '7d' },
       );
       res.send({ token, user });
-      throw new AuthorisationError('Неправильные почта или пароль');
+      // throw new AuthorisationError('Неправильные почта или пароль');
     })
     .catch(next);
 };
@@ -32,11 +34,10 @@ const getUsers = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
+/*  const { email, password } = req.body;
+   if (!email || !password) {
     throw new BadRequestErrorr('Не передан email или пароль');
-  }
+  } */
 
   return bcrypt
     .hash(req.body.password, 10)
@@ -87,7 +88,8 @@ const getDataUser = (req, res, next) => {
 };
 
 // логика обновления данных пользователя
-const updateUser = (id, newData, res, next) => {
+const updateUser = (newData, req, res, next) => {
+  const id = req.user._id;
   return User.findByIdAndUpdate(id, newData, {
     new: true,
     runValidators: true,
@@ -108,16 +110,14 @@ const updateUser = (id, newData, res, next) => {
 
 const updateDataUser = (req, res, next) => {
   const newUserData = req.body;
-  const id = req.user._id;
 
-  updateUser(id, newUserData, res, next);
+  updateUser(newUserData, req, res, next);
 };
 
 const updateAvatarUser = (req, res, next) => {
   const { avatar } = req.body;
-  const id = req.user._id;
 
-  updateUser(id, { avatar }, res, next);
+  updateUser({ avatar }, req, res, next);
 };
 
 module.exports = {

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 /* const bodyParser = require('body-parser'); */
 const mongoose = require('mongoose');
@@ -5,7 +7,8 @@ const mongoose = require('mongoose');
 
 const routes = require('./routes/index');
 
-const { PORT = 3000 } = process.env;
+const port = process.env.PORT || 3000;
+// const { PORT = 3000 } = process.env;
 /* http://localhost:3000 */
 
 const app = express();
@@ -16,10 +19,15 @@ mongoose
   })
   .then(() => {
   //  console.log('connect to db');
-    /* console.log(mongoose.Error); */
   });
 
 app.use(express.json());
+
+app.use(routes);
+
+app.listen(port, () => {
+  /* console.log(`App listening on port ${port}`); */
+});
 
 // app.use(cookieParser());
 
@@ -31,8 +39,4 @@ app.use(express.json());
   next();
 }); */
 
-app.use(routes);
-
-app.listen(PORT, () => {
-  /* console.log(`App listening on port ${PORT}`); */
-});
+/* console.log(mongoose.Error); */

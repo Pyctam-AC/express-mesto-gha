@@ -1,9 +1,8 @@
 require('dotenv').config();
 
 const express = require('express');
-/* const bodyParser = require('body-parser'); */
 const mongoose = require('mongoose');
-// const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 
 const routes = require('./routes/index');
 
@@ -21,14 +20,17 @@ mongoose
   //  console.log('connect to db');
   });
 
+app.use(cookieParser());
+
 app.use(express.json());
 
 app.use(routes);
 
 app.listen(port, () => {
-  /* console.log(`App listening on port ${port}`); */
+  console.log(`App listening on port ${port}`);
 });
 
+/* const bodyParser = require('body-parser'); */
 // app.use(cookieParser());
 
 /* app.use((req, res, next) => {

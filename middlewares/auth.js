@@ -4,19 +4,8 @@ const AuthorisationError = require('../errors/AuthorisationError');
 
 const secretKey = process.env.SECRET_KEY || 'some-secret-key';
 
-/* const extractBearerToken = (header) => {
-  return header.replace('Bearer ', '');
-}; */
-
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
-/*   const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new AuthorisationError('Неправильные почта или пароль'));
-  }
-  const token = extractBearerToken(authorization); */
-
   const token = req.cookies.jwt;
 
   if (!token) {
@@ -40,6 +29,10 @@ module.exports = (req, res, next) => {
   return next(new AuthorisationError('Неправильные почта или пароль'));
 };
  */
+
+/* const extractBearerToken = (header) => {
+  return header.replace('Bearer ', '');
+}; */
 
 //  const { authorization } = req.headers;
 

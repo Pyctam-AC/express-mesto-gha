@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(routes);
 
 app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
+//  console.log(`App listening on port ${port}`);
 });
 
 /* const bodyParser = require('body-parser'); */

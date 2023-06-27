@@ -15,12 +15,6 @@ const getCards = (req, res, next) => {
 };
 
 const createCard = (req, res, next) => {
-  const { name, link } = req.body;
-
-  if (!name || !link) {
-    throw new BadRequestErrorr('Не переданы данные для создания карточки');
-  }
-
   Card.create({
     name: req.body.name,
     link: req.body.link,
